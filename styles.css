@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "Quicksand";
+    src: url("Quicksand/Quicksand-VariableFont_wght.ttf") format("truetype");
+}
+
 body {
     margin: 0;
     height: 100vh;
@@ -12,6 +17,13 @@ canvas {
     width: 100%;
     height: 100%;
 }
+
+.theme {
+    float: right;
+    width: 5%;
+    height: 9%;
+    padding: 10px;
+  }
 
 .crescent {
     position: absolute; 
@@ -33,8 +45,8 @@ canvas {
     --c: #ffffffe7;
     --w: 3px;
     position: absolute; 
-    top: 3%; 
-    left: 95%;
+    top: 15%; 
+    left: 15%;
     --grad: transparent calc(50% - var(--w)/2), 
           var(--c) calc(50% - var(--w)/2 + 1px) 
                    calc(50% + var(--w)/2 - 1px), 
@@ -67,4 +79,36 @@ canvas {
 .sun:hover {
     --c: #ffe600e7;
     border: 2px solid #ffe600e7;
+}
+
+.buttons {
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    padding-left: 15%;
+    padding-right: 9%;
+    padding-top: 5%;
+}
+
+.button {
+    width: 75px;
+    height: 75px;
+    border-radius: 100%;
+    background: #002fffc2;
+    background-size: cover;
+}
+
+.buttons .button:hover {
+    background: #6200fff6;
+    background-size: cover;
+}
+
+#b1 {
+    background-image: url("assets/github.png");
+}
+#b2 {
+    background-image: url("assets/flask.png");
+}
+#b3 {
+    background-image: url("assets/linkedin.png");
 }
