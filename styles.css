@@ -112,3 +112,21 @@ canvas {
 #b3 {
     background-image: url("assets/linkedin.png");
 }
+
+.container {
+    align-self: center;
+    margin-top: 5%;
+    margin-left: 10%;
+    width: 80%;
+    height: 60%;
+    border-radius: 40px;
+    border: 5px solid #002fff9a;
+    overflow: hidden;
+}
+
+.content {
+    text-align: center;
+    font-family: "Quicksand", sans-serif;
+    font-size: 50px;
+    color: #b700ffc2;
+}
