@@ -103,11 +103,14 @@ canvas {
     background-size: cover;
 }
 
+#b0 {
+    background-image: url("assets/term.png");
+}
 #b1 {
-    background-image: url("assets/github.png");
+    background-image: url("assets/flask.png");
 }
 #b2 {
-    background-image: url("assets/flask.png");
+    background-image: url("assets/github.png");
 }
 #b3 {
     background-image: url("assets/linkedin.png");
