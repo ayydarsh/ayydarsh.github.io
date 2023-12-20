@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<head>
+    <title>soon</title>
+    <link rel="icon" href="../../assets/term.png">
+    <link rel="stylesheet" href="../pages.css">
+</head>
+
+<div class="sidebar">
+    <item href="#intro">Introduction</item>
+    <item href="#data">Data Processing</item>
+    <item href="#mod">Model Implementation</item>
+    <item href="#con">Conclusion</item>
+    <item href="#ref">References</item>
+</div>
+
+<script src="../sidebar.js"></script>
+
+<body>
+    <script src="../prism.js"></script>
+    <div class="nothing"></div>
+    <h>Automobile Dataset Analysis</h>
+    <p></p>
+
+    <h id="intro">Introduction</h>
+    <p>The goal of this project is to create a model that can accurately predict the price of cars given several predictors through regression. In the automobile dataset, there are 26 fearures that can be used to predict the price of a car. In real life the price of a car is often attributed to the brand/company as well as the type of car (sedan, SUV, etc.), however this project aims to find the actual best predictors for a car's price.</p>
+    <p>The automobile dataset is a compilation of 1985 imports from the following sources: 1985 Ward's Automotive Yearbook, Personal Auto Manuals from the Insurance Services Office, and Insurance Collision Report from the Insurance Institute for Highway Safety.</p>
+    <p>The dataset may not include all the features necessary for accurately predicting the price of a car, however, it has numerous features which should be useful for predicting price. The featues, listed below in the code cell are mostly self-explanatory, except for <ps>symboling</ps>, <ps>normalized-losses</ps>, and <ps>aspirations</ps>. <ps>symboling</ps> is an insurance risk rating that ranges from -3 to 3, where -3 is the most safe and 3 is the most risky. <ps>normalized-losses</ps> is the relative average loss payment per insured vehicle year. <ps>aspirations</ps> refers to the engine being equiped with a turbo or not. </p>
+
+
+    <h id="data">Data Processing</h>
+    <pre><code class="language-python">
+    import pandas as pd
+    import numpy as np
+    import seaborn as sns
+    from sklearn.preprocessing import *
+    from sklearn.model_selection import *
+    from sklearn.linear_model import *
+    from sklearn.metrics import *
+    
+    cols = [
+        'symboling',
+        'normalized-losses',
+        'make',
+        'fuel-type',
+        'aspiration',
+        'num-of-doors',
+        'body-style',
+        'drive-wheels',
+        'engine-location',
+        'wheel-base',
+        'length',
+        'width',
+        'height',
+        'curb-weight',
+        'engine-type',
+        'num-of-cylinders',
+        'engine-size',
+        'fuel-system',
+        'bore',
+        'stroke',
+        'compression-ratio',
+        'horsepower',
+        'peak-rpm',
+        'city-mpg',
+        'highway-mpg',
+        'price'
+    ]
+    df = pd.read_csv("automobile/imports-85.data", names=cols)
+    </code></pre>
+
+    <p>The <ps>normalized-loses</ps> has too many missing values (41) to drop rows, so it must be removed in order to eliminate unknown values while having a large enough dataset.</p>
+    <p>To determine correlating features, I will be using a scatter matrix. Features that do not appear to correlate to price in a meaningful way (linear relationship, quadratic relationship, etc.) will be excluded before performing regression.</p>
+    
+    <pre><code class="language-python">
+    df = df.drop(columns=["normalized-losses"])
+    sns.pairplot(df)
+    </code></pre>
+    <img src="scattermatrix.png">
+    <p>The issue with the current scatter matrix is that many of the features are missing. This is because of the datatypes in the dataset. Using <code class="language-python">df.dtypes</code> shows the following:</p>
+    <pre><code class="language-markup">
+    symboling              int64
+    make                  object
+    fuel-type             object
+    aspiration            object
+    num-of-doors          object
+    body-style            object
+    drive-wheels          object
+    engine-location       object
+    wheel-base           float64
+    length               float64
+    width                float64
+    height               float64
+    curb-weight            int64
+    engine-type           object
+    num-of-cylinders      object
+    engine-size            int64
+    fuel-system           object
+    bore                  object
+    stroke                object
+    compression-ratio    float64
+    horsepower            object
+    peak-rpm              object
+    city-mpg               int64
+    highway-mpg            int64
+    price                 object
+    dtype: object
+    </code></pre>
+
+    <p>First, unknown values need to be removed, then the datatypes must be manually changed because some columns contain numeric values in strings while other columns actually contain strings. The columns with strings will be converted into numeric values, which will allow for them to be plotted in the scatter matrix, and if they appear to be correlated with price, they can be used in the regression model. I will opt to change the string values to numeric by assigning numbers to each string instead of generating dummy variables because it is easier to see relationships when plotting. The dataset comes with a file with attribute information including unique values, which I will use to replace values. It also makes it clear which replaced values correspond with the original, unlike using <code class="language-markup">df[*column*].unique()</code>, where it is unclear which values correspond to new values when remapping.</p>
+    
+    <pre><code class="language-python">
+    df.replace("?", np.nan, inplace=True)
+    df.dropna(inplace=True)
+    df["price"] = df["price"].astype(int)
+    df["peak-rpm"] = df["peak-rpm"].astype(int)
+    df["bore"] = df["bore"].astype(float)
+    df["stroke"] = df["stroke"].astype(float)
+    df["horsepower"] = df["horsepower"].astype(int)
+    df["peak-rpm"] = df["peak-rpm"].astype(float)
+    </code></pre>
+
+    <p>Changing strings to numeric values has a consistent approach. If a feature has more than two unique strings, the numbering starts at 1. For features with two string values, 0 is assigned to the string with more occurances and 1 for the other string. The idea is to not influence the coefficients as much for features with two values, but for features with many values, it's illogical to not update the coefficient because the sheer number of values will likely inflate the intercept. The method will not matter because the regressor will compensate for any method, given that it's validity.</p>
+    <pre><code class="language-python">
+    make = ["alfa-romero", "audi", "bmw", "chevrolet", "dodge", "honda",
+        "isuzu", "jaguar", "mazda", "mercedes-benz", "mercury",
+        "mitsubishi", "nissan", "peugot", "plymouth", "porsche",
+        "renault", "saab", "subaru", "toyota", "volkswagen", "volvo"]
+    df["make"].replace(make, [i for i in range(1,len(make)+1)], inplace=True)
+
+    df["fuel-type"].replace(["diesel", "gas"], [1, 0], inplace=True)
+
+    df["aspiration"].replace(["std", "turbo"], [0, 1], inplace=True)
+
+    df["num-of-doors"].replace(["four", "two"], [0, 1], inplace=True)
+
+    body_style = ["hardtop", "wagon", "sedan", "hatchback", "convertible"]
+    df["body-style"].replace(body_style, [i for i in range(1,len(body_style)+1)], 
+                            inplace=True)
+
+    df["drive-wheels"].replace(["4wd", "fwd", "rwd"], [1, 2, 3], inplace=True)
+
+    df["engine-location"].replace(["front", "rear"], [0, 1], inplace=True)
+
+    engine_type = ["dohc", "dohcv", "l", "ohc", "ohcf", "ohcv", "rotor"]
+    df["engine-type"].replace(engine_type, [i for i in range(1,len(engine_type)+1)], 
+                            inplace=True)
+
+    cylinders = ["eight", "five", "four", "six", "three", "twelve", "two"]
+    cylinders_int = [8, 5, 4, 6, 3, 12, 2]
+
+    df["num-of-cylinders"].replace(cylinders, cylinders_int, inplace=True)
+
+    fuel_system = ["1bbl", "2bbl", "4bbl", "idi", "mfi", "mpfi", "spdi", "spfi"]
+    df["fuel-system"].replace(fuel_system, [i for i in range(1, len(fuel_system)+1)], inplace=True)    
+    
+    sns.pairplot(df)
+    </code></pre>
+    <img src="scattermatrixallfeatures.png">
+    <p>Based on the improved scatter matrix, the features that appear to correlate with price are wheel-base, length, width, curb-weight, num-of-cylinders, engine-size, horsepower, city-mpg, and highway-mpg. The other features do not show any significant relationship between them and price.</p>
+
+
+    <h id="mod">Model Implementation</h>
+    <p>I will use k-fold cross validation to fit multiple models to find the best coefficients for the linear model.</p>
+    <pre><code class="language-python">
+    X = df[["wheel-base", "length", "width", "curb-weight", "num-of-cylinders",
+         "engine-size", "horsepower", "city-mpg", "highway-mpg"]]
+    y = df["price"]
+
+
+    model = LinearRegression()
+    kf = KFold(n_splits=5, shuffle=True, random_state=2**32-1)
+    params = {
+        'fit_intercept': [True, False]
+    }
+    cv = GridSearchCV(model, params, cv=kf, scoring='neg_mean_squared_error')
+    cv.fit(X,y)
+    </code></pre>
+    <p>Since k-fold found the best linear model, it performance of the model needs to be determined. I will be refering to MSE and R-squared values to determine the performance of the model.</p>
+    <pre><code class="language-python">
+    print("Coefficients:")
+    print(cv.best_estimator_.coef_)
+    print("Intercept:")
+    print(cv.best_estimator_.intercept_)
+    print("\nMSE from best model:")
+    print(cv.best_score_)
+    print("Normalized MSE (scaled to describe accuracy):")
+    print(1+cv.best_score_/10**8)
+    print("\nR-squared:")
+    print(cv.best_estimator_.score(X,y))
+    </code></pre>
+
+    <pre><code class="language-markup">
+    Coefficients:
+    [  96.17593698  -36.97069418  560.51318752    2.85722933  637.55890233
+        76.70961819   52.96776904 -173.87054981  247.67395385]
+    Intercept:
+    -55386.3910390244
+    
+    MSE from best model:
+    -13474520.934441801
+    Normalized MSE (scaled to describe accuracy):
+    0.865254790655582
+    
+    R-squared:
+    0.8298608986436997
+    </code></pre>
+
+    <div class="nothing"></div>
+    <h id="con">Conclusion</h>
+    <p>After fitting a linear model on the using k-fold cross validation to find the best fit, the model appears to be able to predict the price of cars given the predictors wheel-base, length, width, curb-weight, num-of-cylinders, engine-size, horsepower, city-mpg, and highway-mpg. The model has an accuracy of 86.53% and the R&sup2; value of 0.829 indicates the model was able to capture a significant portion of the variance in the predictors. Overall, the linear model is effective at predicting the price of a car given the necessary data</p>
+
+    <h id="ref">References</h>
+    <p><a href="https://archive.ics.uci.edu/dataset/10/automobile" target="_blank">https://archive.ics.uci.edu/dataset/10/automobile</a></p>
+    <div class="nothing"></div>
+</body>
+
+</html>
