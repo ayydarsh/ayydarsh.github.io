@@ -42,7 +42,7 @@ canvas {
 .sun {
     --s: 7px;
     --o: 5px;
-    --c: #ffffffe7;
+    --c: #ffffffe7; 
     --w: 3px;
     position: absolute; 
     top: 15%; 
