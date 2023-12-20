@@ -99,7 +99,7 @@ canvas {
 }
 
 .buttons .button:hover {
-    background: #6200fff6;
+    background: #b700ffc2;
     background-size: cover;
 }
 
@@ -118,6 +118,7 @@ canvas {
 
 .container {
     align-self: center;
+    position: relative;
     margin-top: 5%;
     margin-left: 10%;
     width: 80%;
@@ -125,11 +126,51 @@ canvas {
     border-radius: 40px;
     border: 5px solid #002fff9a;
     overflow: hidden;
+    font-family: "Quicksand", sans-serif;
 }
 
 .content {
     text-align: center;
-    font-family: "Quicksand", sans-serif;
-    font-size: 50px;
+    width: 100%;
+    height: 10%;
+    padding-bottom: 2%;
+}
+
+.projects {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+.projectheader {
+    text-align: center !important;
+    font-size: 45px;
     color: #b700ffc2;
+}
+.project {
+    padding-top: 2.5%;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    padding-bottom: 2.5%;
+    max-width: 40%;
+}
+.projectname {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffffe7;
+}
+  
+.projectdesc {
+    font-family: "Quicksand", sans-serif;
+    font-size: 14px;
+    color: #ffffffe7;
+    max-width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: #0000ff;
+}
+
+a:visited {
+    color: #0000ff;
 }
