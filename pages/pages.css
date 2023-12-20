@@ -37,7 +37,22 @@ body {
 .sidebar item:hover {
     color: #f1f1f1;
 }
- 
+
+::-webkit-scrollbar {
+    width: 10px;
+    background: #1d1d1d;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #0000ffc7; 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #0000ff; 
+}
 
 .nothing {
     height: 2%;
