@@ -124,7 +124,8 @@ canvas {
     width: 80%;
     height: 60%;
     border-radius: 40px;
-    border: 5px solid #002fff9a;
+    border: 5px #002fff9a;
+    background: #002fff9a;
     overflow: hidden;
     font-family: "Quicksand", sans-serif;
 }
@@ -168,7 +169,7 @@ canvas {
 
 a {
     text-decoration: none;
-    color: #0000ff;
+    color: #ffffffe7;
 }
 
 a:hover {
@@ -176,5 +177,5 @@ a:hover {
 }
 
 a:visited {
-    color: #0000ff;
+    color: #ffffffe7;
 }
