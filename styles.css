@@ -81,12 +81,25 @@ canvas {
     border: 2px solid #ffe600e7;
 }
 
+.extraspace {
+    padding-top: 5%;
+}
+
+.maintext {
+    font-family: "Quicksand", sans-serif;
+    color: #002fffc2;
+    font-size: 30px;
+    text-align: center;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
 .buttons {
     position: relative;
     display: flex;
     justify-content: space-around;
-    padding-left: 15%;
-    padding-right: 9%;
+    padding-left: 12%;
+    padding-right: 12%;
     padding-top: 5%;
 }
 
@@ -119,7 +132,7 @@ canvas {
 .container {
     align-self: center;
     position: relative;
-    margin-top: 5%;
+    margin-top: 3%;
     margin-left: 10%;
     width: 80%;
     height: 60%;
